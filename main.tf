@@ -62,7 +62,7 @@ module "token-auth-backend-role" {
   token_auth_backend_role_orphan                 = true
   token_auth_backend_role_renewable              = true
   token_auth_backend_role_role_name              = "nomad-cluster"
-  token_auth_backend_role_token_explicit_max_ttl = 115200
+  token_auth_backend_role_token_explicit_max_ttl = 0
   token_auth_backend_role_token_period           = 259200
 }
 
@@ -85,7 +85,7 @@ module "mount" {
 
   mount_default_lease_ttl_seconds = 3600
   mount_description               = "PKI secret backend"
-  mount_max_lease_ttl_seconds     = 86400
+  mount_max_lease_ttl_seconds     = 87600
   mount_path                      = "pki"
   mount_type                      = "pki"
 }
@@ -106,7 +106,7 @@ module "pki-secret-backend-role" {
   pki_secret_backend_role_key_bits         = 4096
   pki_secret_backend_role_key_type         = "ed25519"
   pki_secret_backend_role_name             = "consul"
-  pki_secret_backend_role_ttl              = 3600
+  pki_secret_backend_role_ttl              = 87600
 }
 
 resource "vault_pki_secret_backend_root_cert" "this" {
