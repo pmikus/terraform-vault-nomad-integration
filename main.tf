@@ -35,9 +35,14 @@ data "vault_policy_document" "this" {
     path         = "auth/token/renew-self"
   }
   rule {
-    capabilities = ["update"]
+    capabilities = ["create", "read", "update", "patch", "delete", "list"]
     description  = "Allow PKI issuer."
-    path         = "pki/issue/*"
+    path         = "pki/issue/consul"
+  }
+  rule {
+    capabilities = ["create", "read", "update", "patch", "delete", "list"]
+    description  = "Allow PKI issuer."
+    path         = "pki/*"
   }
 }
 
@@ -83,9 +88,7 @@ module "mount" {
   source  = "pmikus/mount/vault"
   version = "3.14.0"
 
-  mount_default_lease_ttl_seconds = 3600
   mount_description               = "PKI secret backend"
-  mount_max_lease_ttl_seconds     = 87600
   mount_path                      = "pki"
   mount_type                      = "pki"
 }
@@ -104,7 +107,7 @@ module "pki-secret-backend-role" {
   pki_secret_backend_role_allowed_domains  = ["service.consul"]
   pki_secret_backend_role_backend          = module.mount.mount_path
   pki_secret_backend_role_key_bits         = 4096
-  pki_secret_backend_role_key_type         = "ed25519"
+  pki_secret_backend_role_key_type         = "rsa"
   pki_secret_backend_role_name             = "consul"
   pki_secret_backend_role_ttl              = 87600
 }
@@ -117,7 +120,6 @@ resource "vault_pki_secret_backend_root_cert" "this" {
   backend              = module.mount.mount_path
   type                 = "internal"
   common_name          = "service.consul"
-  ttl                  = "315360000"
   format               = "pem"
   private_key_format   = "der"
   key_bits             = 4096
